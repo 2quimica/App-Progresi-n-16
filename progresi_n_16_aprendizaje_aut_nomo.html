@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progresión 16: Convección del Manto y Tectónica de Placas</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #e0e7ff;
+            --secondary: #0284c7;
+            --secondary-light: #e0f2fe;
+            --accent: #059669;
+            --accent-light: #d1fae5;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --earth-magma: #c2410c;
+            --earth-magma-light: #ffedd5;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.55;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e1b4b, #3730a3);
+            color: white;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #c7d2fe;
+            font-weight: 700;
+        }
+
+        .header-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #34d399;
+            transition: width 0.3s ease;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            color: #e0e7ff;
+            font-weight: 600;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto 0;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3 {
+            color: var(--secondary);
+            font-size: 1.05rem;
+            margin: 16px 0 10px;
+        }
+
+        p {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .micro-read {
+            background-color: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 14px 16px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 14px 0;
+            font-size: 0.95rem;
+        }
+
+        .micro-read strong {
+            color: var(--primary-dark);
+        }
+
+        .math-block {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 12px 0;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+        }
+
+        .btn-hint {
+            background-color: var(--warning-light);
+            color: var(--warning);
+            border: 1px solid #fcd34d;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            width: auto;
+            margin-top: 8px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.88rem;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            background-color: #fff;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: 2px solid var(--primary);
+            border-color: transparent;
+        }
+
+        .option-card {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .option-card.correct {
+            border-color: var(--accent);
+            background-color: var(--accent-light);
+            color: #065f46;
+        }
+
+        .option-card.incorrect {
+            border-color: var(--danger);
+            background-color: var(--danger-light);
+            color: #991b1b;
+        }
+
+        .feedback-box {
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            margin-top: 12px;
+            font-size: 0.92rem;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .feedback-box.correct {
+            background-color: var(--accent-light);
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .feedback-box.incorrect {
+            background-color: var(--danger-light);
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .sim-container {
+            width: 100%;
+            background: #0f172a;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            color: white;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .sim-btn {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .sim-btn.active {
+            background: var(--primary);
+            border-color: var(--primary-light);
+        }
+
+        .matching-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .drag-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            background: #f1f5f9;
+            border-radius: var(--radius-sm);
+            min-height: 50px;
+            margin-bottom: 12px;
+        }
+
+        .chip {
+            background: white;
+            border: 1px solid var(--primary);
+            color: var(--primary-dark);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chip.selected {
+            background: var(--primary);
+            color: white;
+        }
+
+        .slot {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            font-size: 0.85rem;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .slot.filled {
+            border-style: solid;
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .slot.correct-slot {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .slot.incorrect-slot {
+            border-color: var(--danger);
+            background: var(--danger-light);
+        }
+
+        .quiz-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .quiz-nav-btn {
+            padding: 8px 0;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .quiz-nav-btn.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .quiz-nav-btn.answered {
+            background: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        .evidence-card {
+            background: #ffffff;
+            border: 3px solid var(--primary-dark);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .evidence-header {
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .evidence-title {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 900;
+        }
+
+        .evidence-badge {
+            background: var(--earth-magma);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            text-align: left;
+            margin: 16px 0;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .evidence-item {
+            font-size: 0.88rem;
+        }
+
+        .evidence-item label {
+            display: block;
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .evidence-item val {
+            font-weight: 800;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        .compact-code {
+            background: #0f172a;
+            color: #38bdf8;
+            font-family: monospace;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            word-break: break-all;
+            margin: 14px 0;
+            border: 1px dashed #0284c7;
+        }
+
+        .alert-whatsapp {
+            background-color: var(--accent-light);
+            color: #065f46;
+            border: 2px dashed var(--accent);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-top: 16px;
+        }
+
+        .alert-completion {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            border: 2px solid var(--primary);
+            padding: 14px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.92rem;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .step-container {
+            display: none;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 14px 0;
+        }
+
+        .feature-card {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .feature-card.selected {
+            border-color: var(--earth-magma);
+            background: var(--earth-magma-light);
+            font-weight: bold;
+        }
+
+        .sequence-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 14px 0;
+        }
+
+        .sequence-item {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.88rem;
+        }
+
+        .move-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .move-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .boundary-tabs {
+            display: flex;
+            gap: 6px;
+            margin: 12px 0;
+        }
+
+        .boundary-tab {
+            flex: 1;
+            padding: 10px 4px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            background: #e2e8f0;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .boundary-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="header-subtitle">FÍSICA • APRENDIZAJE AUTÓNOMO A DISTANCIA</div>
+            <div class="header-title">PROGRESIÓN 16: Convección del Manto y Tectónica de Placas</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div class="step-indicator">
+                <span id="stepText">Inicio</span>
+                <span id="timerDisplay">Tiempo Activo: 00:00</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- STEP 0: REGISTRO -->
+        <div class="step-container active" id="step0">
+            <div class="card">
+                <h2>👋 Bienvenida y Registro</h2>
+                <p><strong>LA ENERGÍA EN LOS PROCESOS DE LA VIDA DIARIA — PROGRESIÓN 16</strong></p>
+                
+                <div class="micro-read">
+                    "En esta última progresión de la asignatura estudiarás cómo el <strong>flujo de energía térmica desde el interior de la Tierra</strong> impulsa los <strong>ciclos de convección en el manto terrestre</strong> y genera el lento movimiento de las <strong>placas tectónicas</strong>. Comprenderás la relación de este dinamismo con fenómenos como volcanes, terremotos y la formación del relieve. Trabaja a tu propio ritmo, explora las simulaciones y utiliza las pistas cuando sea necesario."
+                </div>
+
+                <div class="input-group">
+                    <label for="inputName">Nombre completo del estudiante *</label>
+                    <input type="text" id="inputName" placeholder="Ej. Ana Lucía Mendoza Pérez" autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label for="inputGroup">Grupo *</label>
+                    <input type="text" id="inputGroup" placeholder="Ej. 4° A" autocomplete="off">
+                </div>
+
+                <div class="micro-read" style="border-left-color: var(--accent);">
+                    📌 <strong>Trabajo Autónomo a Distancia:</strong> Tu profesor atenderá comisiones académicas. Esta aplicación guiará tu proceso de aprendizaje paso a paso, corregirá tus respuestas en tiempo real y registrará tus avances sin necesidad de conexión a internet.
+                </div>
+
+                <button class="btn btn-primary" onclick="startSession()">🚀 COMENZAR MI SESIÓN P16</button>
+            </div>
+        </div>
+
+        <!-- STEP 1: ENGANCHA -->
+        <div class="step-container" id="step1">
+            <div class="card">
+                <h2>1. ENGANCHA: Una Tierra Dinámica en Movimiento</h2>
+                <p>Observa estos cuatro grandes fenómenos de la naturaleza terrestre:</p>
+
+                <div class="feature-grid">
+                    <div class="feature-card selected" id="feat1" onclick="selectEngageFeature(1)">
+                        <div style="font-size:1.6rem;">🌋</div>
+                        <strong>Erupciones Volcánicas</strong>
+                    </div>
+                    <div class="feature-card" id="feat2" onclick="selectEngageFeature(2)">
+                        <div style="font-size:1.6rem;">⚡</div>
+                        <strong>Sismos y Terremotos</strong>
+                    </div>
+                    <div class="feature-card" id="feat3" onclick="selectEngageFeature(3)">
+                        <div style="font-size:1.6rem;">🏔️</div>
+                        <strong>Cadenas Montañosas</strong>
+                    </div>
+                    <div class="feature-card" id="feat4" onclick="selectEngageFeature(4)">
+                        <div style="font-size:1.6rem;">🌊</div>
+                        <strong>Dorsales Oceánicas</strong>
+                    </div>
+                </div>
+
+                <div id="engageFeatureDesc" class="micro-read">
+                    <strong>🌋 Erupciones Volcánicas:</strong> Liberan magma, ceniza y gases del interior terrestre, reflejando el escape de calor interno acumulado.
+                </div>
+
+                <h3>❓ Pregunta Analítica de Predicción</h3>
+                <p>¿Qué fuente de energía motoriza estos gigantescos procesos que ocurren a lo largo de millones de años en nuestro planeta?</p>
+
+                <div id="optsEngage">
+                    <div class="option-card" onclick="checkEngage(1, this)">
+                        <span>A) El calor del Sol reflejado por la atmósfera terrestre hacia el suelo.</span>
+                    </div>
+                    <div class="option-card" onclick="checkEngage(2, this)">
+                        <span>B) El flujo de energía térmica que proviene del interior de la Tierra (calor remanente y desintegración radiactiva).</span>
+                    </div>
+                    <div class="option-card" onclick="checkEngage(3, this)">
+                        <span>C) La fricción de los vientos atmosféricos sobre las rocas continentales.</span>
+                    </div>
+                </div>
+                <button class="btn btn-hint" onclick="useHint('Engancha: A diferencia del clima y la biosfera (sostenidos por el Sol), los procesos tectónicos y volcánicos se alimentan de la energía almacenada en el núcleo y manto terrestre.')">💡 Necesito una pista</button>
+
+                <div class="feedback-box" id="fbEngage"></div>
+
+                <h3>🌐 Explorador Estructural: El Interior de la Tierra</h3>
+                <p>Toca cada capa del planeta para analizar sus propiedades físicas de densidad y temperatura:</p>
+
+                <div class="sim-container">
+                    <svg viewBox="0 0 380 180" width="100%" height="180">
+                        <!-- Crust Layer -->
+                        <path d="M 40 30 Q 190 10 340 30 L 340 50 Q 190 30 40 50 Z" fill="#78350f" id="layerCrust" onclick="inspectLayer(1)" style="cursor:pointer;"/>
+                        <text x="190" y="38" fill="#fef3c7" font-size="11" font-weight="bold" text-anchor="middle">Litosfera / Corteza (Rígida / Placas)</text>
+
+                        <!-- Mantle Layer -->
+                        <path d="M 40 50 Q 190 30 340 50 L 340 120 Q 190 100 40 120 Z" fill="#ea580c" id="layerMantle" onclick="inspectLayer(2)" style="cursor:pointer;"/>
+                        <text x="190" y="80" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">Manto Terrestre (Roca sólida deformable / Convección)</text>
+
+                        <!-- Core Layer -->
+                        <path d="M 40 120 Q 190 100 340 120 L 340 160 Q 190 140 40 160 Z" fill="#b91c1c" id="layerCore" onclick="inspectLayer(3)" style="cursor:pointer;"/>
+                        <text x="190" y="145" fill="#fef2f2" font-size="11" font-weight="bold" text-anchor="middle">Núcleo Terrestre (Alta Temperatura y Densidad)</text>
+                    </svg>
+
+                    <div id="layerInfoBox" style="font-size:0.85rem; color:#cbd5e1; margin-top:8px;">
+                        Toca una capa para inspeccionar su comportamiento mecánico y térmico.
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="goToStep(2)">Continuar a 2. EXPLORA ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: EXPLORA -->
+        <div class="step-container" id="step2">
+            <div class="card">
+                <h2>2. EXPLORA: Convección Térmica, Densidad y Modelo Mecánico</h2>
+                
+                <div class="micro-read">
+                    <strong>¿De dónde proviene la Energía Interna de la Tierra?</strong><br>
+                    1. <strong>Calor Remanente:</strong> Energía liberada por los colisiones e impactos durante la formación inicial del planeta (hace 4,500 millones de años).<br>
+                    2. <strong>Desintegración Radiactiva:</strong> Emisión de calor por la desintegración de isótopos inestables (Uranio, Torio, Potasio) dentro del manto y núcleo.
+                </div>
+
+                <div class="micro-read" style="border-left-color: var(--warning);">
+                    ⚠️ <strong>Aclaración Científica Esencial:</strong><br>
+                    El manto terrestre <strong>NO es un "océano de magma totalmente líquido"</strong>. Está compuesto primordialmente por roca sólida (peridotita) que, sometida a presiones extremas y altas temperaturas, se comporta como un material plástico/viscoso capaz de <strong>deformarse y fluir muy lentamente</strong> en escalas de millones de años (a ritmo de centímetros por año).
+                </div>
+
+                <h3>🧪 Simulación 1: Celda de Convección Térmica en el Manto</h3>
+                <p>Observa cómo la transferencia de calor del núcleo modifica la densidad del material e induce corrientes circulares:</p>
+
+                <div class="sim-container">
+                    <svg viewBox="0 0 380 200" width="100%" height="200">
+                        <!-- Top Surface / Lithosphere -->
+                        <rect x="30" y="20" width="320" height="16" fill="#475569" rx="3"/>
+                        <text x="190" y="32" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">Litosfera Fría (Placas Tectónicas)</text>
+
+                        <!-- Mantle Box -->
+                        <rect x="30" y="36" width="320" height="120" fill="#7c2d12" opacity="0.8"/>
+
+                        <!-- Core Boundary Heat Source -->
+                        <rect x="30" y="156" width="320" height="24" fill="#dc2626"/>
+                        <text x="190" y="172" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">🔥 Núcleo Caliente (Fuente de Energía Térmica)</text>
+
+                        <!-- Left Convection Loop -->
+                        <g id="simLoopLeft">
+                            <!-- Ascending Plume -->
+                            <path d="M 100 150 L 100 50" stroke="#f97316" stroke-width="6" marker-end="url(#arrUp)"/>
+                            <text x="75" y="100" fill="#fdba74" font-size="10" font-weight="bold">Caliente (Menos Denso) ➔ Asciende</text>
+                            
+                            <!-- Descending Slab -->
+                            <path d="M 160 50 L 160 150" stroke="#0284c7" stroke-width="6" marker-end="url(#arrDown)"/>
+                            <text x="175" y="100" fill="#7dd3fc" font-size="10" font-weight="bold">Frío (Más Denso) ➔ Desciende</text>
+                        </g>
+
+                        <!-- Right Convection Loop -->
+                        <g id="simLoopRight">
+                            <path d="M 280 150 L 280 50" stroke="#f97316" stroke-width="6" marker-end="url(#arrUp)"/>
+                            <path d="M 220 50 L 220 150" stroke="#0284c7" stroke-width="6" marker-end="url(#arrDown)"/>
+                        </g>
+
+                        <defs>
+                            <marker id="arrUp" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316" />
+                            </marker>
+                            <marker id="arrDown" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
+                            </marker>
+                        </defs>
+                    </svg>
+
+                    <div style="font-size:0.85rem; color:#cbd5e1; margin-top:8px;">
+                        Modelo Conceptual: El calor dilata el material inferior reduciendo su densidad (ascenso), mientras que al ceder energía en la parte superior se enfria, aumenta su densidad y desciende por gravedad.
+                    </div>
+                </div>
+
+                <h3>🔄 Ordena la Cadena Causal del Movimiento Terrestre</h3>
+                <p>Organiza secuencialmente la cadena de causalidad de la Progresión 16 (utiliza los botones ▲ subir / ▼ bajar):</p>
+
+                <div class="sequence-list" id="seqChainList">
+                    <div class="sequence-item" data-id="3">
+                        <span>3. Cambios en la densidad relativa de las rocas del manto</span>
+                        <div class="move-btns">
+                            <button class="move-btn" onclick="moveSeq(this, -1)">▲</button>
+                            <button class="move-btn" onclick="moveSeq(this, 1)">▼</button>
+                        </div>
+                    </div>
+                    <div class="sequence-item" data-id="1">
+                        <span>1. Flujo continuo de energía térmica desde el interior de la Tierra</span>
+                        <div class="move-btns">
+                            <button class="move-btn" onclick="moveSeq(this, -1)">▲</button>
+                            <button class="move-btn" onclick="moveSeq(this, 1)">▼</button>
+                        </div>
+                    </div>
+                    <div class="sequence-item" data-id="2">
+                        <span>2. Diferencias de temperatura entre el núcleo y las regiones superiores</span>
+                        <div class="move-btns">
+                            <button class="move-btn" onclick="moveSeq(this, -1)">▲</button>
+                            <button class="move-btn" onclick="moveSeq(this, 1)">▼</button>
+                        </div>
+                    </div>
+                    <div class="sequence-item" data-id="5">
+                        <span>5. Desplazamiento de las placas tectónicas en la litosfera</span>
+                        <div class="move-btns">
+                            <button class="move-btn" onclick="moveSeq(this, -1)">▲</button>
+                            <button class="move-btn" onclick="moveSeq(this, 1)">▼</button>
+                        </div>
+                    </div>
+                    <div class="sequence-item" data-id="4">
+                        <span>4. Movimiento convectivo de materia (ascenso de caliente / descenso por gravedad de frío)</span>
+                        <div class="move-btns">
+                            <button class="move-btn" onclick="moveSeq(this, -1)">▲</button>
+                            <button class="move-btn" onclick="moveSeq(this, 1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="checkCausalSequence()">VERIFICAR CADENA CAUSAL</button>
+                <button class="btn btn-hint" onclick="useHint('Explora: El orden lógico es: Flujo de energía ➔ Diferencia de temperatura ➔ Cambios de densidad ➔ Movimiento de convección ➔ Movimiento tectónico.')">💡 Necesito una pista</button>
+
+                <div class="feedback-box" id="fbSeqChain"></div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">⬅️ Anterior</button>
+                    <button class="btn btn-primary" onclick="goToStep(3)">Continuar a 3. COMPRENDE ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: COMPRENDE -->
+        <div class="step-container" id="step3">
+            <div class="card">
+                <h2>3. COMPRENDE: Tipos de Límites Tectónicos y Riesgo Geológico</h2>
+                
+                <div class="micro-read">
+                    <strong>La Escala Temporal Geológica:</strong><br>
+                    El desplazamiento de las placas tectónicas ocurre a velocidades extremadamente lentas, típicamente de <strong>2 a 10 centímetros por año</strong> (similar a la velocidad de crecimiento de las uñas humanas). Sin embargo, acumulado durante millones de años, este movimiento ha separado continentes y construido grandes cordilleras.
+                </div>
+
+                <h3>🗺️ Visualizador Dinámico de Límites de Placas</h3>
+                <p>Selecciona el tipo de interacción entre dos placas adyacentes:</p>
+
+                <div class="boundary-tabs">
+                    <button class="boundary-tab active" id="tabDiv" onclick="switchBoundary('div')">Divergente (← →)</button>
+                    <button class="boundary-tab" id="tabConv" onclick="switchBoundary('conv')">Convergente (→ ←)</button>
+                    <button class="boundary-tab" id="tabTrans" onclick="switchBoundary('trans')">Transformante (↑ ↓)</button>
+                </div>
+
+                <div class="sim-container" id="boundaryBox">
+                    <svg viewBox="0 0 380 160" width="100%" height="160" id="svgBoundary">
+                        <!-- Dynamic content via JS -->
+                    </svg>
+                    <div id="boundaryDesc" style="font-size:0.85rem; color:#cbd5e1; margin-top:8px;">
+                        <!-- Dynamic text -->
+                    </div>
+                </div>
+
+                <h3>⚡ Terremotos, Volcanismo y Tsunamis</h3>
+                <div class="micro-read" style="border-left-color: var(--secondary);">
+                    • <strong>Acumulación de Energía en Fallas:</strong> Las placas intentan deslizarse pero sufren fricción. Se acumula energía de deformación elástica hasta que se rompen o sueltan repentinamente, liberando <strong>ondas sísmicas (terremoto)</strong>.<br><br>
+                    • <strong>Subducción y Volcanismo:</strong> Al hundirse una placa oceánica cargada de agua bajo otra, facilita la fusión parcial del manto, originando magma que asciende formando volcanes.<br><br>
+                    • <strong>Clarificación de Tsunamis:</strong> Ocurren cuando un terremoto submarino importante produce un desplazamiento vertical del fondo marino que impulsa grandes masa de agua. <em>No todos los sismos generan tsunamis</em>.
+                </div>
+
+                <h3>🛡️ Peligro Natural vs Riesgo y Reducción de Impacto</h3>
+                <p>Asigna cada concepto a su definición o medida preventiva adecuada:</p>
+
+                <div class="drag-bank" id="chipBankRisk">
+                    <div class="chip" onclick="selectRiskChip(this, 'Construcción Antisísmica')">Construcción Antisísmica</div>
+                    <div class="chip" onclick="selectRiskChip(this, 'Peligro Natural')">Peligro Natural</div>
+                    <div class="chip" onclick="selectRiskChip(this, 'Riesgo Geológico')">Riesgo Geológico</div>
+                    <div class="chip" onclick="selectRiskChip(this, 'Monitoreo y Alerta Temprana')">Monitoreo y Alerta Temprana</div>
+                </div>
+
+                <div class="matching-grid">
+                    <div>
+                        <strong>1. Evento físico (sismo/erupción) que no se puede evitar</strong>
+                        <div class="slot" id="slotPel" onclick="assignRiskSlot(this, 'Peligro Natural')">Toca para asignar</div>
+                    </div>
+                    <div>
+                        <strong>2. Daño potencial combinando peligro y vulnerabilidad humana</strong>
+                        <div class="slot" id="slotRies" onclick="assignRiskSlot(this, 'Riesgo Geológico')">Toca para asignar</div>
+                    </div>
+                    <div>
+                        <strong>3. Estrategia estructural de prevención edilicia</strong>
+                        <div class="slot" id="slotConst" onclick="assignRiskSlot(this, 'Construcción Antisísmica')">Toca para asignar</div>
+                    </div>
+                    <div>
+                        <strong>4. Red de sensores sismológicos y volcánicos</strong>
+                        <div class="slot" id="slotMon" onclick="assignRiskSlot(this, 'Monitoreo y Alerta Temprana')">Toca para asignar</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="checkRiskMatching()">COMPROBAR GESTIÓN DE RIESGO</button>
+                <button class="btn btn-hint" onclick="useHint('Comprende: El peligro es el evento natural, el riesgo evalúa la vulnerabilidad, las obras antisísmicas y el monitoreo previenen desastres.')">💡 Necesito una pista</button>
+
+                <div class="feedback-box" id="fbRisk"></div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goToStep(2)">⬅️ Anterior</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)">Continuar a 4. ORGANIZA ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: ORGANIZA -->
+        <div class="step-container" id="step4">
+            <div class="card">
+                <h2>4. ORGANIZA: Mapa Conceptual Táctil P16</h2>
+                <p>Organiza la red de conceptos clave de la Progresión 16. Toca un término del banco y luego su casilla correspondiente:</p>
+
+                <div class="drag-bank" id="mapBank">
+                    <div class="chip" onclick="selectMapChip(this, 'Energía Interna')">Energía Interna</div>
+                    <div class="chip" onclick="selectMapChip(this, 'Convección Térmica')">Convección Térmica</div>
+                    <div class="chip" onclick="selectMapChip(this, 'Diferencia de Densidad')">Diferencia de Densidad</div>
+                    <div class="chip" onclick="selectMapChip(this, 'Manto Terrestre')">Manto Terrestre</div>
+                    <div class="chip" onclick="selectMapChip(this, 'Placas Tectónicas')">Placas Tectónicas</div>
+                    <div class="chip" onclick="selectMapChip(this, 'Ondas Sísmicas')">Ondas Sísmicas</div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+                    <div class="slot" id="mapSlot1" onclick="assignMapSlot(this, 'Energía Interna')">
+                        1. Calor remanente y radiactividad que fluyen hacia el exterior ➔ [ Vacío ]
+                    </div>
+                    <div class="slot" id="mapSlot2" onclick="assignMapSlot(this, 'Manto Terrestre')">
+                        2. Capa de roca sólida deformable donde ocurren los ciclos ➔ [ Vacío ]
+                    </div>
+                    <div class="slot" id="mapSlot3" onclick="assignMapSlot(this, 'Diferencia de Densidad')">
+                        3. Causa del ascenso de roca caliente y descenso de roca fría ➔ [ Vacío ]
+                    </div>
+                    <div class="slot" id="mapSlot4" onclick="assignMapSlot(this, 'Convección Térmica')">
+                        4. Movimiento de materia impulsado por el flujo de energía ➔ [ Vacío ]
+                    </div>
+                    <div class="slot" id="mapSlot5" onclick="assignMapSlot(this, 'Placas Tectónicas')">
+                        5. Fragmentos rígidos de la litosfera arrastrados lentamente ➔ [ Vacío ]
+                    </div>
+                    <div class="slot" id="mapSlot6" onclick="assignMapSlot(this, 'Ondas Sísmicas')">
+                        6. Energía liberada en terremotos al romper o soltar fallas ➔ [ Vacío ]
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="checkConceptMap()">VERIFICAR MAPA CONCEPTUAL</button>
+                <button class="btn btn-hint" onclick="useHint('Organiza: La Energía Interna calienta el Manto Terrestre, generando Diferencias de Densidad y Convección que desplazan Placas Tectónicas.')">💡 Necesito una pista</button>
+
+                <div class="feedback-box" id="fbMap"></div>
+
+                <h3>⚖️ Afirmaciones de Comprobación Conceptual</h3>
+                <div id="tfContainer">
+                    <div style="margin-bottom:14px;">
+                        <p><strong>1. "El manto terrestre es un lago completamente líquido donde las placas flotan como barcos en agua."</strong></p>
+                        <button class="btn btn-secondary" style="width:auto; display:inline-block; padding:8px 16px;" onclick="checkTF(1, true)">Correcta</button>
+                        <button class="btn btn-secondary" style="width:auto; display:inline-block; padding:8px 16px;" onclick="checkTF(1, false)">Necesita Corrección</button>
+                        <div class="feedback-box" id="fbTF1"></div>
+                    </div>
+
+                    <div style="margin-bottom:14px;">
+                        <p><strong>2. "La convección en el manto transfiere energía e implica un movimiento continuo de materia."</strong></p>
+                        <button class="btn btn-secondary" style="width:auto; display:inline-block; padding:8px 16px;" onclick="checkTF(2, true)">Correcta</button>
+                        <button class="btn btn-secondary" style="width:auto; display:inline-block; padding:8px 16px;" onclick="checkTF(2, false)">Necesita Corrección</button>
+                        <div class="feedback-box" id="fbTF2"></div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goToStep(3)">⬅️ Anterior</button>
+                    <button class="btn btn-primary" onclick="goToStep(5)">Continuar a 5. APLICA ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5: APLICA -->
+        <div class="step-container" id="step5">
+            <div class="card">
+                <h2>5. APLICA: Desafíos de Escenarios Geológicos Reales</h2>
+                
+                <h3>🌋 Escenario 1: Dorsal Mesoatlántica (Límite Divergente)</h3>
+                <p>En el centro del Océano Atlántico, dos placas tectónicas se están separando a razón de 2.5 cm por año. ¿Qué proceso físico ocurre en la grieta creada?</p>
+
+                <div id="optsApp1">
+                    <div class="option-card" onclick="checkApp1(1, this)">
+                        <span>A) El océano se vacía hacia el núcleo de la Tierra.</span>
+                    </div>
+                    <div class="option-card" onclick="checkApp1(2, this)">
+                        <span>B) El material caliente del manto asciende, se enfría al contacto con el agua y forma nueva corteza oceánica.</span>
+                    </div>
+                    <div class="option-card" onclick="checkApp1(3, this)">
+                        <span>C) Se crea un agujero negro en la corteza terrestre.</span>
+                    </div>
+                </div>
+                <div class="feedback-box" id="fbApp1"></div>
+
+                <h3>⛰️ Escenario 2: La Cordillera de los Andes (Subducción)</h3>
+                <p>La Placa de Nazca (oceánica, más densa) colisiona frontalmente contra la Placa Sudamericana (continental, menos densa). ¿Por qué la placa de Nazca se hunden por debajo?</p>
+
+                <div id="optsApp2">
+                    <div class="option-card" onclick="checkApp2(1, this)">
+                        <span>A) Porque es más densa y la fuerza de gravedad impulsa su descenso al manto (subducción).</span>
+                    </div>
+                    <div class="option-card" onclick="checkApp2(2, this)">
+                        <span>B) Porque es más liviana y flota sobre el aire continental.</span>
+                    </div>
+                    <div class="option-card" onclick="checkApp2(3, this)">
+                        <span>C) Porque la Placa Sudamericana la empuja electromagnéticamente.</span>
+                    </div>
+                </div>
+                <div class="feedback-box" id="fbApp2"></div>
+
+                <h3>🛠️ Escenario 3: Prevención de Desastres en Zonas Sísmicas</h3>
+                <p>Si una ciudad se ubica cerca de una falla transformante (como la Falla de San Andrés), ¿cuál es la medida de reducción de riesgo más efectiva a largo plazo?</p>
+
+                <div id="optsApp3">
+                    <div class="option-card" onclick="checkApp3(1, this)">
+                        <span>A) Tratar de congelar la falla inyectando agua helada subterránea.</span>
+                    </div>
+                    <div class="option-card" onclick="checkApp3(2, this)">
+                        <span>B) Aplicar códigos estrictos de construcción antisísmica, educación en simulacros y redes de alerta temprana.</span>
+                    </div>
+                    <div class="option-card" onclick="checkApp3(3, this)">
+                        <span>C) Evacuar permanentemente a toda la población del continente.</span>
+                    </div>
+                </div>
+                <div class="feedback-box" id="fbApp3"></div>
+
+                <button class="btn btn-hint" onclick="useHint('Aplica: Recuerda: en divergencia se crea corteza nueva; en subducción la placa más densa se hunde por gravedad; y el riesgo sísmico se reduce con edificación adecuada y prevención.')">💡 Necesito una pista</button>
+
+                <div class="btn-group" style="margin-top:20px;">
+                    <button class="btn btn-secondary" onclick="goToStep(4)">⬅️ Anterior</button>
+                    <button class="btn btn-primary" onclick="goToStep(6)">Continuar a 6. COMPRUEBA (TEST FINAL) ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 6: COMPRUEBA (TEST FINAL) -->
+        <div class="step-container" id="step6">
+            <div class="card">
+                <h2>6. COMPRUEBA: Evaluación Formativa P16</h2>
+                <p>Responde los <strong>10 reactivos de opción múltiple</strong> basados en las fuentes oficiales. Tu calificación se generará al entregar el test.</p>
+
+                <div class="quiz-nav-grid" id="quizNavGrid"></div>
+
+                <div id="quizQuestionBox" style="min-height: 200px;">
+                    <!-- Question rendered dynamically -->
+                </div>
+
+                <div class="btn-group" style="margin-top: 14px;">
+                    <button class="btn btn-secondary" id="btnQuizPrev" onclick="navQuiz(-1)">⬅️ Anterior</button>
+                    <button class="btn btn-secondary" id="btnQuizNext" onclick="navQuiz(1)">Siguiente ➡️</button>
+                </div>
+
+                <div style="margin-top: 20px;" id="submitQuizContainer">
+                    <button class="btn btn-primary" id="btnSubmitQuiz" onclick="submitQuiz()" disabled style="opacity: 0.5;">
+                        📋 ENTREGAR EVALUACIÓN FINAL
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 7: REFLEXIONA Y EVIDENCIA -->
+        <div class="step-container" id="step7">
+            <div class="card">
+                <h2>7. REFLEXIONA Y REGISTRO DE EVIDENCIA</h2>
+                
+                <div class="input-group">
+                    <label for="reflectionText">En tus propias palabras: ¿Cómo puede el flujo de energía desde el interior de la Tierra producir movimiento de materia en el manto y relacionarse con el desplazamiento de las placas tectónicas? * (Mínimo 30 caracteres)</label>
+                    <textarea id="reflectionText" rows="3" placeholder="Escribe tu reflexión aquí..." oninput="validateReflection()"></textarea>
+                    <div id="reflectionLength" style="font-size:0.75rem; color:var(--text-muted); text-align:right;">0 / 30 caracteres</div>
+                </div>
+
+                <h3>📊 Preguntas de Percepción de Aprendizaje</h3>
+
+                <div class="input-group">
+                    <label for="perc1">1. Esta App me ayudó a comprender los contenidos de la Progresión 16:</label>
+                    <select id="perc1">
+                        <option value="4">4 — Mucho</option>
+                        <option value="3" selected>3 — Bastante</option>
+                        <option value="2">2 — Poco</option>
+                        <option value="1">1 — Nada o casi nada</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="perc2">2. Pude trabajar con esta App de manera autónoma sin necesitar al profesor a mi lado:</label>
+                    <select id="perc2">
+                        <option value="4" selected>4 — Totalmente</option>
+                        <option value="3">3 — En gran parte</option>
+                        <option value="2">2 — Con algunas dificultades</option>
+                        <option value="1">1 — Me resultó muy difícil</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" id="btnGenerateCard" onclick="generateEvidenceCard()" disabled>
+                    🎓 GENERAR TARJETA DE EVIDENCIA FINAL
+                </button>
+            </div>
+
+            <!-- EVIDENCIA FINAL -->
+            <div id="evidenceDisplayContainer" style="display:none; margin-top:20px;">
+                <div class="evidence-card" id="evidenceCard">
+                    <div class="evidence-header">
+                        <div class="evidence-title">✅ PROGRESIÓN 16 COMPLETADA</div>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin:4px 0 0 0;">LA ENERGÍA EN LOS PROCESOS DE LA VIDA DIARIA</p>
+                        <div class="evidence-badge">CONVECCIÓN DEL MANTO Y MOVIMIENTO TECTÓNICO</div>
+                    </div>
+
+                    <div class="evidence-grid">
+                        <div class="evidence-item">
+                            <label>Estudiante</label>
+                            <val id="evName">---</val>
+                        </div>
+                        <div class="evidence-item">
+                            <label>Grupo</label>
+                            <val id="evGroup">---</val>
+                        </div>
+                        <div class="evidence-item">
+                            <label>Resultado Evaluación</label>
+                            <val id="evScore">0 / 10 (0%)</val>
+                        </div>
+                        <div class="evidence-item">
+                            <label>Nivel Obtenido</label>
+                            <val id="evLevel">---</val>
+                        </div>
+                        <div class="evidence-item">
+                            <label>Tiempo Activo</label>
+                            <val id="evTime">00 min 00 s</val>
+                        </div>
+                        <div class="evidence-item">
+                            <label>Intentos Corrección (IC)</label>
+                            <val id="evErrors">0</val>
+                        </div>
+                        <div class="evidence-item">
+                            <label>Pistas Utilizadas (P)</label>
+                            <val id="evHints">0</val>
+                        </div>
+                        <div class="evidence-item">
+                            <label>Percepción Compren. / Autonom.</label>
+                            <val id="evPerception">C: 4/4 | A: 4/4</val>
+                        </div>
+                        <div class="evidence-item" style="grid-column: span 2;">
+                            <label>Fecha y Hora de Término</label>
+                            <val id="evDate">---</val>
+                        </div>
+                    </div>
+
+                    <div style="text-align:left; font-size:0.82rem; background:#f1f5f9; padding:10px; border-radius:8px; margin-bottom:12px;">
+                        <strong>SÍNTESIS DEL ESTUDIANTE:</strong>
+                        <p id="evReflection" style="font-style:italic; margin:4px 0 0 0; color:#334155;"></p>
+                    </div>
+
+                    <div class="compact-code" id="evCompactLine">
+                        📊 REGISTRO DE ACTIVIDAD: P16 | 0/10 | 0% | 00:00 | IC:0 | P:0 | C:0/4 | A:0/4
+                    </div>
+
+                    <div class="alert-whatsapp">
+                        📸 TOMA UNA CAPTURA DE ESTA PANTALLA Y ENVÍALA A TU PROFESOR POR WHATSAPP.
+                    </div>
+
+                    <div class="alert-completion">
+                        🎉 ¡Felicidades! Has concluido las actividades correspondientes a las Progresiones 11–16. Conserva tu captura de pantalla y envíala a tu profesor.
+                    </div>
+                </div>
+
+                <div style="margin-top:16px;">
+                    <button class="btn btn-secondary" onclick="reviewQuizAnswers()">🔍 REVISAR MIS RESPUESTAS DEL TEST</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        /* ESTADO GLOBAL DE LA APP Y ANALÍTICAS ESTANDARIZADAS */
+        let studentName = "";
+        let studentGroup = "";
+        let currentStep = 0;
+        
+        let activeTimeSeconds = 0;
+        let timerInterval = null;
+        
+        let formativeErrors = 0; // Intentos de Corrección (IC)
+        let hintsUsed = 0; // Pistas Utilizadas (P)
+
+        let selectedChipText = null;
+        let selectedChipElem = null;
+
+        let selectedRiskChipText = null;
+        let selectedRiskChipElem = null;
+
+        let selectedMapChipText = null;
+        let selectedMapChipElem = null;
+
+        // 10 REACTIVOS EXCLUSIVOS Y RIGUROSOS DE LA PROGRESIÓN 16
+        const quizQuestions = [
+            {
+                q: "1. De acuerdo con la Progresión 16, ¿cuál es la causa primaria del movimiento de las placas tectónicas?",
+                options: [
+                    "A) La fuerza de gravedad ejercida por la Luna sobre los continentes.",
+                    "B) La convección térmica en el manto terrestre provocada por el flujo de energía desde el interior.",
+                    "C) La fricción de los vientos atmosféricos sobre las montañas.",
+                    "D) La evaporación del agua de los océanos."
+                ],
+                correct: 1,
+                exp: "Los movimientos tectónicos ocurren principalmente debido a los ciclos de convección térmica en el manto impulsados por el calor interno."
+            },
+            {
+                q: "2. ¿De dónde proviene la energía térmica acumulada en el interior de la Tierra?",
+                options: [
+                    "A) Exclusivamente de la luz solar absorbida en las zonas polares.",
+                    "B) Del calor remanente de la formación terrestre y de la desintegración radiactiva de isótopos en el manto y núcleo.",
+                    "C) De la combustión de carbón y petróleo subterráneo.",
+                    "D) De la energía eléctrica acumulada en las tormentas."
+                ],
+                correct: 1,
+                exp: "La energía interna proviene del calor residual de acreción inicial del planeta y de la constante desintegración radiactiva."
+            },
+            {
+                q: "3. En el proceso de convección térmica dentro del manto, ¿qué le ocurre al material más caliente de las profundidades?",
+                options: [
+                    "A) Aumenta su densidad y se hunde hacia el núcleo.",
+                    "B) Se dilata ligeramente, disminuye su densidad relativa y tiende a ascender lentamente.",
+                    "C) Se convierte inmediatamente en hielo sólido.",
+                    "D) Se destruye y desaparece del planeta."
+                ],
+                correct: 1,
+                exp: "El calentamiento disminuye la densidad relativa de las rocas del manto inferior, haciendo que asciendan hacia la litosfera."
+            },
+            {
+                q: "4. ¿Qué comportamiento mecánico presenta el manto terrestre según las fuentes oficiales?",
+                options: [
+                    "A) Es un líquido extremadamente fluido como el agua.",
+                    "B) Es un gas comprimido a alta presión.",
+                    "C) Es roca sólida que se comporta plásticamente y fluye de forma muy lenta en escalas de tiempo geológico.",
+                    "D) Es un cristal hueco de cuarzo."
+                ],
+                correct: 2,
+                exp: "El manto está formado por roca sólida que, bajo alta temperatura y presión, se deforma plásticamente a escalas de millones de años."
+            },
+            {
+                q: "5. ¿Cuál es el orden correcto de la cadena de causalidad de los procesos tectónicos?",
+                options: [
+                    "A) Movimiento tectónico ➔ Placas ➔ Densidad ➔ Energía interna.",
+                    "B) Flujo de energía interna ➔ Diferencia de temperatura ➔ Cambios de densidad ➔ Convección de materia ➔ Desplazamiento tectónico.",
+                    "C) Terremotos ➔ Convección ➔ Fricción del aire ➔ Viento.",
+                    "D) Fotosíntesis ➔ Gravedad ➔ Núcleo ➔ Volcanes."
+                ],
+                correct: 1,
+                exp: "El flujo de energía genera gradientes de temperatura y densidad, activando la convección del manto que arrastra las placas."
+            },
+            {
+                q: "6. En los límites de placa DIVERGENTES (donde dos placas se separan):",
+                options: [
+                    "A) Una placa se hunde debajo de la otra destruyendo corteza.",
+                    "B) El magma del manto asciende y se enfría, formando nueva corteza oceánica (ej. Dorsal Mesoatlántica).",
+                    "C) No existe ninguna actividad geológica ni volcánica.",
+                    "D) Se forman las montañas más altas del planeta sin vulcanismo."
+                ],
+                correct: 1,
+                exp: "Al separarse las placas en límites divergentes, el ascenso de magma en las dorsales genera nueva corteza oceánica."
+            },
+            {
+                q: "7. ¿Qué fenómeno caracteriza a una zona de SUBDUCCIÓN en un límite convergente?",
+                options: [
+                    "A) Las dos placas se separan formando océanos.",
+                    "B) La placa más densa se hunde hacia el manto bajo la gravedad, generando fosas, volcanes y grandes sismos.",
+                    "C) Las placas se deslizan lateralmente sin deformación.",
+                    "D) El agua de mar se convierte en vapor de gas helio."
+                ],
+                correct: 1,
+                exp: "En la subducción, la placa más densa desciende hacia el interior del manto guiada por el movimiento gravitacional."
+            },
+            {
+                q: "8. ¿Cómo se originan los terremotos en los límites de placas transformantes (como la Falla de San Andrés)?",
+                options: [
+                    "A) El calor del Sol hace explotar las rocas superficiales.",
+                    "B) La fricción del deslizamiento lateral bloquea el avance, acumulando energía de deformación hasta su liberación repentina en ondas sísmicas.",
+                    "C) Las mareas oceánicas golpean las rocas con demasiada fuerza.",
+                    "D) Por el peso de los edificios sobre el suelo."
+                ],
+                correct: 1,
+                exp: "El rozamiento traba las placas hasta superar el límite elástico; el rompimiento brusco libera energía acumulada en forma de ondas sísmicas."
+            },
+            {
+                q: "9. ¿Cuál de las siguientes afirmaciones sobre los TSUNAMIS es científicamente correcta?",
+                options: [
+                    "A) Todos los terremotos en tierra firme producen tsunamis gigantescos.",
+                    "B) Ocurren cuando un evento sísmico o tectónico submarino desplaza de forma importante una masa vertical de agua oceánica.",
+                    "C) Los tsunamis son causados por la luz infrarroja del Sol sobre las olas.",
+                    "D) No tienen ninguna relación con la dinámica del fondo marino."
+                ],
+                correct: 1,
+                exp: "Los tsunamis requieren un desplazamiento sísmico/tectónico del suelo marino que desplace verticalmente la columna de agua."
+            },
+            {
+                q: "10. ¿Cuál es la diferencia fundamental entre 'Peligro Natural' y 'Riesgo Geológico'?",
+                options: [
+                    "A) Son exactamente lo mismo sin distinción.",
+                    "B) El peligro es el fenómeno natural inevitable (ej. sismo); el riesgo considera el daño potencial según la vulnerabilidad y prevención humana.",
+                    "C) El peligro se combate con lluvia y el riesgo con viento.",
+                    "D) El peligro sólo ocurre en el espacio exterior."
+                ],
+                correct: 1,
+                exp: "El peligro es la amenaza física natural; el riesgo evalúa la probabilidad de pérdidas humanas o materiales según la mitigación."
+            }
+        ];
+
+        let quizUserAnswers = new Array(10).fill(null);
+        let currentQuizIndex = 0;
+        let quizSubmitted = false;
+
+        window.onload = function() {
+            loadSavedState();
+            renderQuizNav();
+            renderQuizQuestion(0);
+            switchBoundary('div');
+        };
+
+        function startSession() {
+            const name = document.getElementById('inputName').value.trim();
+            const group = document.getElementById('inputGroup').value.trim();
+
+            if (!name || !group) {
+                alert("Por favor escribe tu Nombre Completo y Grupo para comenzar.");
+                return;
+            }
+
+            studentName = name;
+            studentGroup = group;
+            startActiveTimer();
+            goToStep(1);
+            saveState();
+        }
+
+        function startActiveTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                if (!document.hidden && currentStep > 0 && currentStep < 7) {
+                    activeTimeSeconds++;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+
+            // Page Visibility API para detener el tiempo si se minimiza la pestaña
+            document.addEventListener("visibilitychange", function() {
+                if (document.hidden) {
+                    // Pausa implícita al no incrementar activeTimeSeconds
+                }
+            });
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(activeTimeSeconds / 60);
+            const secs = activeTimeSeconds % 60;
+            const str = `Tiempo Activo: ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').innerText = str;
+        }
+
+        function goToStep(stepNum) {
+            document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${stepNum}`).classList.add('active');
+            currentStep = stepNum;
+
+            const percent = Math.round((stepNum / 7) * 100);
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            
+            const stepLabels = [
+                "Inicio", "1. Engancha", "2. Explora", "3. Comprende", 
+                "4. Organiza", "5. Aplica", "6. Comprueba", "7. Evidencia"
+            ];
+            document.getElementById('stepText').innerText = stepLabels[stepNum] || "";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            saveState();
+        }
+
+        function useHint(hintText) {
+            hintsUsed++;
+            alert(`💡 PISTA:\n\n${hintText}`);
+            saveState();
+        }
+
+        function selectEngageFeature(featId) {
+            document.querySelectorAll('.feature-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById(`feat${featId}`).classList.add('selected');
+
+            const descs = [
+                "<strong>🌋 Erupciones Volcánicas:</strong> Liberan magma, ceniza y gases del interior terrestre, reflejando el escape de calor interno acumulado.",
+                "<strong>⚡ Sismos y Terremotos:</strong> Ocurren por la rápida liberación de energía elástica acumulada en las fallas tectónicas.",
+                "<strong>🏔️ Cadenas Montañosas:</strong> Se forman a lo largo de millones de años por la colisión y deformación de placas tectónicas continentales.",
+                "<strong>🌊 Dorsales Oceánicas:</strong> Cordilleras submarinas donde dos placas se separan y asciende magma del manto creando nueva corteza."
+            ];
+            document.getElementById('engageFeatureDesc').innerHTML = descs[featId - 1];
+        }
+
+        function checkEngage(optIndex, elem) {
+            const fb = document.getElementById('fbEngage');
+            const opts = document.querySelectorAll('#optsEngage .option-card');
+            opts.forEach(o => o.classList.remove('selected', 'correct', 'incorrect'));
+            elem.classList.add('selected');
+
+            if (optIndex === 2) {
+                elem.classList.add('correct');
+                fb.className = "feedback-box show correct";
+                fb.innerHTML = "✅ <strong>¡CORRECTO!</strong> El motor del dinamismo geológico es el flujo de energía térmica proveniente del núcleo y manto de la Tierra.";
+            } else {
+                elem.classList.add('incorrect');
+                formativeErrors++;
+                fb.className = "feedback-box show incorrect";
+                fb.innerHTML = "❌ <strong>Necesita revisión:</strong> El Sol impulsa la atmósfera y la fotosíntesis, pero los terremotos y volcanes se alimentan de la energía interna de la Tierra.";
+            }
+            saveState();
+        }
+
+        function inspectLayer(layerId) {
+            const descs = [
+                "<strong>Litosfera / Corteza:</strong> Capa externa rígida y frágil (de 5 a 70 km de espesor) dividida en fragmentos llamados placas tectónicas.",
+                "<strong>Manto Terrestre:</strong> Capa sólida (aprox. 2,900 km) que actúa de forma plástica/viscosa a altas temperaturas, permitiendo la convección térmica continua.",
+                "<strong>Núcleo Terrestre:</strong> Esfera central compuesta de Hierro y Níquel (más de 4,000 °C). Su inmenso calor impulsa las celdas de convección del manto."
+            ];
+            document.getElementById('layerInfoBox').innerHTML = descs[layerId - 1];
+        }
+
+        function moveSeq(btn, dir) {
+            const item = btn.closest('.sequence-item');
+            const list = item.parentElement;
+            if (dir === -1 && item.previousElementSibling) {
+                list.insertBefore(item, item.previousElementSibling);
+            } else if (dir === 1 && item.nextElementSibling) {
+                list.insertBefore(item.nextElementSibling, item);
+            }
+        }
+
+        function checkCausalSequence() {
+            const items = document.querySelectorAll('#seqChainList .sequence-item');
+            const currentOrder = Array.from(items).map(i => i.dataset.id).join('');
+            const fb = document.getElementById('fbSeqChain');
+
+            if (currentOrder === "12345") {
+                fb.className = "feedback-box show correct";
+                fb.innerHTML = "✅ <strong>¡Cadena Causal Impecable!</strong> 1. Energíá interna ➔ 2. Gradiente de temperatura ➔ 3. Diferencia de densidad ➔ 4. Convección de materia ➔ 5. Movimiento de placas tectónicas.";
+            } else {
+                formativeErrors++;
+                fb.className = "feedback-box show incorrect";
+                fb.innerHTML = "❌ <strong>Secuencia incorrecta:</strong> Revisa el orden causa-efecto (energía ➔ temperatura ➔ densidad ➔ convección ➔ placas).";
+            }
+            saveState();
+        }
+
+        function switchBoundary(type) {
+            document.querySelectorAll('.boundary-tab').forEach(t => t.classList.remove('active'));
+            const svg = document.getElementById('svgBoundary');
+            const desc = document.getElementById('boundaryDesc');
+
+            if (type === 'div') {
+                document.getElementById('tabDiv').classList.add('active');
+                svg.innerHTML = `
+                    <rect x="20" y="50" width="150" height="30" fill="#475569" rx="3"/>
+                    <rect x="210" y="50" width="150" height="30" fill="#475569" rx="3"/>
+                    <path d="M 120 65 L 40 65" stroke="#38bdf8" stroke-width="4" marker-end="url(#arrL)"/>
+                    <path d="M 260 65 L 340 65" stroke="#38bdf8" stroke-width="4" marker-end="url(#arrR)"/>
+                    <!-- Ascending Magma -->
+                    <path d="M 190 140 L 190 60" stroke="#ef4444" stroke-width="8" marker-end="url(#arrU)"/>
+                    <text x="190" y="35" fill="#f87171" font-size="11" font-weight="bold" text-anchor="middle">Nueva Corteza / Dorsal</text>
+                    <defs>
+                        <marker id="arrL" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/></marker>
+                        <marker id="arrR" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/></marker>
+                        <marker id="arrU" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/></marker>
+                    </defs>
+                `;
+                desc.innerHTML = "<strong>Límite Divergente (← →):</strong> Las placas se separan. El magma del manto asciende y se enfría, creando nueva corteza oceánica (ej. Dorsal Mesoatlántica).";
+            } else if (type === 'conv') {
+                document.getElementById('tabConv').classList.add('active');
+                svg.innerHTML = `
+                    <path d="M 20 50 L 160 50 L 220 130 L 180 140 Z" fill="#0284c7"/>
+                    <rect x="180" y="40" width="170" height="40" fill="#15803d" rx="3"/>
+                    <path d="M 80 40 L 140 40" stroke="#f59e0b" stroke-width="4" marker-end="url(#arrR)"/>
+                    <path d="M 300 30 L 240 30" stroke="#f59e0b" stroke-width="4" marker-end="url(#arrL)"/>
+                    <text x="100" y="110" fill="#38bdf8" font-size="10" font-weight="bold">Placa Densa Subduce (Gravedad)</text>
+                    <text x="270" y="100" fill="#34d399" font-size="10" font-weight="bold">Volcanismo / Montañas</text>
+                `;
+                desc.innerHTML = "<strong>Límite Convergente / Subducción (→ ←):</strong> Dos placas colisionan. La más densa desciende hacia el manto impulsada por la gravedad, formando fosas y volcanes (ej. Cordillera de los Andes).";
+            } else if (type === 'trans') {
+                document.getElementById('tabTrans').classList.add('active');
+                svg.innerHTML = `
+                    <rect x="40" y="30" width="300" height="40" fill="#64748b" rx="3"/>
+                    <rect x="40" y="80" width="300" height="40" fill="#475569" rx="3"/>
+                    <path d="M 100 50 L 200 50" stroke="#fbbf24" stroke-width="4" marker-end="url(#arrR)"/>
+                    <path d="M 280 100 L 180 100" stroke="#fbbf24" stroke-width="4" marker-end="url(#arrL)"/>
+                    <line x1="40" y1="75" x2="340" y2="75" stroke="#ef4444" stroke-width="3" stroke-dasharray="6"/>
+                    <text x="190" y="73" fill="#fca5a5" font-size="10" font-weight="bold" text-anchor="middle">Falla / Rozamiento y Fricción (Energía Sísmica)</text>
+                `;
+                desc.innerHTML = "<strong>Límite Transformante (↑ ↓):</strong> Las placas se deslizan lateralmente. La fricción acumula tensión elástica; al liberarse genera terremotos (ej. Falla de San Andrés).";
+            }
+        }
+
+        function selectRiskChip(elem, text) {
+            document.querySelectorAll('#chipBankRisk .chip').forEach(c => c.classList.remove('selected'));
+            elem.classList.add('selected');
+            selectedRiskChipText = text;
+            selectedRiskChipElem = elem;
+        }
+
+        function assignRiskSlot(slotElem, expectedVal) {
+            if (!selectedRiskChipText) {
+                alert("Primero toca un término del banco superior.");
+                return;
+            }
+            slotElem.innerText = selectedRiskChipText;
+            slotElem.dataset.userVal = selectedRiskChipText;
+            slotElem.dataset.expectedVal = expectedVal;
+            slotElem.classList.add('filled');
+        }
+
+        function checkRiskMatching() {
+            const slots = [
+                document.getElementById('slotPel'),
+                document.getElementById('slotRies'),
+                document.getElementById('slotConst'),
+                document.getElementById('slotMon')
+            ];
+
+            let allCorrect = true;
+            slots.forEach(s => {
+                if (s.dataset.userVal === s.dataset.expectedVal) {
+                    s.className = "slot filled correct-slot";
+                } else {
+                    s.className = "slot filled incorrect-slot";
+                    allCorrect = false;
+                }
+            });
+
+            const fb = document.getElementById('fbRisk');
+            if (allCorrect) {
+                fb.className = "feedback-box show correct";
+                fb.innerHTML = "✅ <strong>¡Excelente!</strong> Has distinguido adecuadamente entre peligro, riesgo y las estrategias fundamentales de prevención.";
+            } else {
+                formativeErrors++;
+                fb.className = "feedback-box show incorrect";
+                fb.innerHTML = "❌ <strong>Revisa las casillas marcadas en rojo:</strong> El peligro es el evento natural, el riesgo evalúa vulnerabilidades y las construcciones/monitoreo previenen desastres.";
+            }
+            saveState();
+        }
+
+        function selectMapChip(elem, text) {
+            document.querySelectorAll('#mapBank .chip').forEach(c => c.classList.remove('selected'));
+            elem.classList.add('selected');
+            selectedMapChipText = text;
+            selectedMapChipElem = elem;
+        }
+
+        function assignMapSlot(slotElem, expectedText) {
+            if (!selectedMapChipText) {
+                alert("Primero selecciona un concepto del banco superior.");
+                return;
+            }
+            slotElem.innerText = `${slotElem.innerText.split('➔')[0]} ➔ [ ${selectedMapChipText} ]`;
+            slotElem.dataset.userVal = selectedMapChipText;
+            slotElem.dataset.expectedVal = expectedText;
+            slotElem.classList.add('filled');
+        }
+
+        function checkConceptMap() {
+            let correctCount = 0;
+            for (let i = 1; i <= 6; i++) {
+                const slot = document.getElementById(`mapSlot${i}`);
+                if (slot.dataset.userVal === slot.dataset.expectedVal) {
+                    slot.className = "slot filled correct-slot";
+                    correctCount++;
+                } else {
+                    slot.className = "slot filled incorrect-slot";
+                }
+            }
+
+            const fb = document.getElementById('fbMap');
+            if (correctCount === 6) {
+                fb.className = "feedback-box show correct";
+                fb.innerHTML = "✅ <strong>¡Mapa Conceptual Impecable!</strong> Has integrado perfectamente la red teórica de la Progresión 16.";
+            } else {
+                formativeErrors++;
+                fb.className = "feedback-box show incorrect";
+                fb.innerHTML = `⚠️ <strong>Has acertado ${correctCount} de 6.</strong> Ajusta las casillas en rojo para completar el mapa.`;
+            }
+            saveState();
+        }
+
+        function checkTF(qNum, userChoice) {
+            const fb = document.getElementById(`fbTF${qNum}`);
+            if (qNum === 1) {
+                if (userChoice === false) {
+                    fb.className = "feedback-box show correct";
+                    fb.innerHTML = "✅ <strong>¡Correcto!</strong> Necesita corrección. El manto está compuesto de roca sólida que fluye lentamente de forma plástica/viscosa bajo extrema temperatura y presión; no es un mar de magma líquido.";
+                } else {
+                    formativeErrors++;
+                    fb.className = "feedback-box show incorrect";
+                    fb.innerHTML = "❌ <strong>Incorrecto:</strong> Evita la idea simplificada del lago líquido. El manto es roca sólida deformable a escalas de tiempo geológicas.";
+                }
+            } else if (qNum === 2) {
+                if (userChoice === true) {
+                    fb.className = "feedback-box show correct";
+                    fb.innerHTML = "✅ <strong>¡Correcto!</strong> La convección en el manto desplaza materia caliente hacia arriba y fría hacia abajo, transfiriendo energía térmica hacia la litosfera.";
+                } else {
+                    formativeErrors++;
+                    fb.className = "feedback-box show incorrect";
+                    fb.innerHTML = "❌ <strong>Revisa la afirmación:</strong> La convección es un proceso de transporte que combina movimiento de masa con transferencia de calor.";
+                }
+            }
+            saveState();
+        }
+
+        function checkApp1(optIndex, elem) {
+            const fb = document.getElementById('fbApp1');
+            const opts = document.querySelectorAll('#optsApp1 .option-card');
+            opts.forEach(o => o.classList.remove('selected', 'correct', 'incorrect'));
+            elem.classList.add('selected');
+
+            if (optIndex === 2) {
+                elem.classList.add('correct');
+                fb.className = "feedback-box show correct";
+                fb.innerHTML = "✅ <strong>¡Correcto!</strong> En los límites divergentes el magma asciende para rellenar la separación de las placas, consolidando nueva corteza oceánica.";
+            } else {
+                elem.classList.add('incorrect');
+                formativeErrors++;
+                fb.className = "feedback-box show incorrect";
+                fb.innerHTML = "❌ <strong>Revisa la respuesta:</strong> Al separarse las placas, el espacio abierto permite la descompresión y ascenso de magma.";
+            }
+            saveState();
+        }
+
+        function checkApp2(optIndex, elem) {
+            const fb = document.getElementById('fbApp2');
+            const opts = document.querySelectorAll('#optsApp2 .option-card');
+            opts.forEach(o => o.classList.remove('selected', 'correct', 'incorrect'));
+            elem.classList.add('selected');
+
+            if (optIndex === 1) {
+                elem.classList.add('correct');
+                fb.className = "feedback-box show correct";
+                fb.innerHTML = "✅ <strong>¡Correcto!</strong> La litosfera oceánica (más fría y densa) subduce por la fuerza de gravedad hacia la astenosfera.";
+            } else {
+                elem.classList.add('incorrect');
+                formativeErrors++;
+                fb.className = "feedback-box show incorrect";
+                fb.innerHTML = "❌ <strong>Revisa la propiedad de densidad:</strong> El material más denso siempre tiende a descender por gravedad.";
+            }
+            saveState();
+        }
+
+        function checkApp3(optIndex, elem) {
+            const fb = document.getElementById('fbApp3');
+            const opts = document.querySelectorAll('#optsApp3 .option-card');
+            opts.forEach(o => o.classList.remove('selected', 'correct', 'incorrect'));
+            elem.classList.add('selected');
+
+            if (optIndex === 2) {
+                elem.classList.add('correct');
+                fb.className = "feedback-box show correct";
+                fb.innerHTML = "✅ <strong>¡Correcto!</strong> No podemos detener los sismos, pero podemos reducir drásticamente el riesgo mediante edificación resistente, simulacros y monitoreo.";
+            } else {
+                elem.classList.add('incorrect');
+                formativeErrors++;
+                fb.className = "feedback-box show incorrect";
+                fb.innerHTML = "❌ <strong>Revisa la opción:</strong> Los eventos sísmicos no se pueden detener físicamente; la prevención se enfoca en la reducción de vulnerabilidad.";
+            }
+            saveState();
+        }
+
+        function renderQuizNav() {
+            const grid = document.getElementById('quizNavGrid');
+            grid.innerHTML = "";
+            for (let i = 0; i < 10; i++) {
+                const btn = document.createElement('button');
+                btn.className = `quiz-nav-btn ${i === currentQuizIndex ? 'active' : ''} ${quizUserAnswers[i] !== null ? 'answered' : ''}`;
+                btn.innerText = i + 1;
+                btn.onclick = () => {
+                    currentQuizIndex = i;
+                    renderQuizQuestion(i);
+                    renderQuizNav();
+                };
+                grid.appendChild(btn);
+            }
+
+            const allAnswered = quizUserAnswers.every(a => a !== null);
+            const submitBtn = document.getElementById('btnSubmitQuiz');
+            if (allAnswered && !quizSubmitted) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+            }
+        }
+
+        function renderQuizQuestion(idx) {
+            const box = document.getElementById('quizQuestionBox');
+            const qData = quizQuestions[idx];
+
+            let html = `<h3>${qData.q}</h3><div style="margin-top:12px;">`;
+
+            qData.options.forEach((optText, optIdx) => {
+                let isSelected = quizUserAnswers[idx] === optIdx;
+                let cardClass = "option-card";
+                if (isSelected) cardClass += " selected";
+
+                if (quizSubmitted) {
+                    if (optIdx === qData.correct) cardClass += " correct";
+                    else if (isSelected) cardClass += " incorrect";
+                }
+
+                html += `
+                    <div class="${cardClass}" onclick="selectQuizOption(${idx}, ${optIdx})">
+                        <span>${optText}</span>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+
+            if (quizSubmitted) {
+                html += `
+                    <div class="feedback-box show correct" style="margin-top:12px;">
+                        💡 <strong>Explicación:</strong> ${qData.exp}
+                    </div>
+                `;
+            }
+
+            box.innerHTML = html;
+
+            document.getElementById('btnQuizPrev').disabled = (idx === 0);
+            document.getElementById('btnQuizNext').disabled = (idx === 9);
+        }
+
+        function selectQuizOption(qIdx, optIdx) {
+            if (quizSubmitted) return;
+            quizUserAnswers[qIdx] = optIdx;
+            renderQuizQuestion(qIdx);
+            renderQuizNav();
+            saveState();
+        }
+
+        function navQuiz(dir) {
+            currentQuizIndex += dir;
+            if (currentQuizIndex < 0) currentQuizIndex = 0;
+            if (currentQuizIndex > 9) currentQuizIndex = 9;
+            renderQuizQuestion(currentQuizIndex);
+            renderQuizNav();
+        }
+
+        function submitQuiz() {
+            quizSubmitted = true;
+            let correctCount = 0;
+            quizQuestions.forEach((q, i) => {
+                if (quizUserAnswers[i] === q.correct) correctCount++;
+            });
+
+            renderQuizQuestion(currentQuizIndex);
+            renderQuizNav();
+            document.getElementById('btnSubmitQuiz').disabled = true;
+
+            alert(`✅ EVALUACIÓN P16 FINALIZADA\n\nResultado: ${correctCount} / 10 aciertos (${correctCount * 10}%).`);
+            goToStep(7);
+        }
+
+        function validateReflection() {
+            const text = document.getElementById('reflectionText').value;
+            const len = text.length;
+            document.getElementById('reflectionLength').innerText = `${len} / 30 caracteres`;
+            const btn = document.getElementById('btnGenerateCard');
+            btn.disabled = (len < 30);
+        }
+
+        function getQualitativeLevel(score) {
+            if (score === 10) return "Excelente";
+            if (score >= 8) return "Muy buen dominio";
+            if (score === 7) return "Buen dominio";
+            if (score === 6) return "En proceso";
+            return "Requiere reforzamiento";
+        }
+
+        function generateEvidenceCard() {
+            let correctCount = 0;
+            quizQuestions.forEach((q, i) => {
+                if (quizUserAnswers[i] === q.correct) correctCount++;
+            });
+
+            const scorePercent = correctCount * 10;
+            const mins = Math.floor(activeTimeSeconds / 60);
+            const secs = activeTimeSeconds % 60;
+            const timeStr = `${mins} min ${secs.toString().padStart(2, '0')} s`;
+            const timeCompact = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+            const perc1 = document.getElementById('perc1').value;
+            const perc2 = document.getElementById('perc2').value;
+            const reflection = document.getElementById('reflectionText').value;
+
+            document.getElementById('evName').innerText = studentName;
+            document.getElementById('evGroup').innerText = studentGroup;
+            document.getElementById('evScore').innerText = `${correctCount} / 10 (${scorePercent}%)`;
+            document.getElementById('evLevel').innerText = getQualitativeLevel(correctCount);
+            document.getElementById('evTime').innerText = timeStr;
+            document.getElementById('evErrors').innerText = formativeErrors;
+            document.getElementById('evHints').innerText = hintsUsed;
+            document.getElementById('evPerception').innerText = `C: ${perc1}/4 | A: ${perc2}/4`;
+            
+            const now = new Date();
+            document.getElementById('evDate').innerText = now.toLocaleString('es-MX');
+            document.getElementById('evReflection').innerText = `"${reflection}"`;
+
+            // LÍNEA COMPACTA ESTÁNDAR EXACTA (P11 - P16)
+            const compactLine = `📊 REGISTRO DE ACTIVIDAD: P16 | ${correctCount}/10 | ${scorePercent}% | ${timeCompact} | IC:${formativeErrors} | P:${hintsUsed} | C:${perc1}/4 | A:${perc2}/4`;
+            document.getElementById('evCompactLine').innerText = compactLine;
+
+            document.getElementById('evidenceDisplayContainer').style.display = 'block';
+            window.scrollTo({ top: document.getElementById('evidenceDisplayContainer').offsetTop, behavior: 'smooth' });
+            saveState();
+        }
+
+        function reviewQuizAnswers() {
+            goToStep(6);
+        }
+
+        function saveState() {
+            try {
+                const data = {
+                    studentName,
+                    studentGroup,
+                    currentStep,
+                    activeTimeSeconds,
+                    formativeErrors,
+                    hintsUsed,
+                    quizUserAnswers,
+                    quizSubmitted,
+                    reflectionText: document.getElementById('reflectionText')?.value || "",
+                    perc1: document.getElementById('perc1')?.value || "3",
+                    perc2: document.getElementById('perc2')?.value || "4"
+                };
+                localStorage.setItem('progresion16_app_state', JSON.stringify(data));
+            } catch(e) {
+                console.warn("LocalStorage no disponible, funcionando en memoria de sesión.", e);
+            }
+        }
+
+        function loadSavedState() {
+            try {
+                const saved = localStorage.getItem('progresion16_app_state');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (data.studentName) {
+                        studentName = data.studentName;
+                        document.getElementById('inputName').value = studentName;
+                    }
+                    if (data.studentGroup) {
+                        studentGroup = data.studentGroup;
+                        document.getElementById('inputGroup').value = studentGroup;
+                    }
+                    if (data.activeTimeSeconds) activeTimeSeconds = data.activeTimeSeconds;
+                    if (data.formativeErrors) formativeErrors = data.formativeErrors;
+                    if (data.hintsUsed) hintsUsed = data.hintsUsed;
+                    if (data.quizUserAnswers) quizUserAnswers = data.quizUserAnswers;
+                    if (data.quizSubmitted) quizSubmitted = data.quizSubmitted;
+                    if (data.reflectionText) document.getElementById('reflectionText').value = data.reflectionText;
+
+                    updateTimerDisplay();
+                }
+            } catch(e) {
+                console.warn("Error al cargar estado almacenado:", e);
+            }
+        }
+    </script>
+</body>
+</html>
